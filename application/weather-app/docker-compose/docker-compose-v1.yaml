@@ -1,0 +1,93 @@
+version: '3'
+services:
+  sixfure-db:
+    container_name: sixfure-db-container
+    image: devopseasylearning/sixfure-db:develop # Specify the desired image tag here
+    hostname: db
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: sixfure
+      MYSQL_USER: sixfure
+      MYSQL_PASSWORD: password
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - sixfure_bridge
+    restart: always
+
+  sixfure-redis:
+    container_name: sixfure-redis-container
+    image: devopseasylearning/sixfure-redis:develop # Specify the desired image tag here
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    environment:
+      REDIS_USER: redis
+      REDIS_PASSWORD: redis
+    volumes:
+      - redis-data:/data
+    networks:
+      - sixfure_bridge
+    restart: always
+
+  sixfure-ui:
+    container_name: sixfure-ui-container
+    image: devopseasylearning/sixfure-ui:develop # Specify the desired image tag here
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    environment:
+      AUTH_HOST: auth
+      AUTH_PORT: 8080
+      WEATHER_HOST: weather
+      WEATHER_PORT: 5000
+      REDIS_USER: redis
+      REDIS_PASSWORD: redis
+    networks:
+      - sixfure_bridge
+    restart: always
+    depends_on:
+      - sixfure-auth
+
+  sixfure-weather:
+    container_name: sixfure-weather-container
+    image: devopseasylearning/sixfure-weather:develop # Specify the desired image tag here
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+    environment:
+      APIKEY: ecbc396f46mshb65cbb1f82cf334p1fcc87jsna5e962a3c542
+    networks:
+      - sixfure_bridge
+    restart: always
+    depends_on:
+      - sixfure-db
+      - sixfure-redis
+
+  sixfure-auth:
+    container_name: sixfure-auth-container
+    image: devopseasylearning/sixfure-auth:develop # Specify the desired image tag here
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: sixfure-db
+      DB_PASSWORD: my-secret-pw
+    networks:
+      - sixfure_bridge
+    expose:
+      - "8080"
+    restart: always
+
+networks:
+  sixfure_bridge:
+    driver: bridge
+volumes:
+  db-data:
+  redis-data:

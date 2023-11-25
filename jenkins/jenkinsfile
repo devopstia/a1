@@ -1,0 +1,66 @@
+properties([
+    buildDiscarder(logRotator(numToKeepStr: '7')),
+    disableConcurrentBuilds(),
+    timeout(time: 10, unit: 'MINUTES')
+])
+
+
+node {
+    def DB_USERNAME = "admin"
+    def DB_PASSWORD = "put-your-passwor-here"
+    def BRANCH_NAME = 'dev'
+
+    try {
+        timestamps {
+            stage('Checkout') {
+                echo "Cloning the repo. Please wait ....................."
+                sh "sleep 5"
+            }
+            stage('Building') {
+                echo "Building the code. Please wait ....................."
+                sh "sleep 5"
+            }
+            stage('Scanning') {
+                echo "Scanning the code. Please wait ....................."
+                sh "sleep 5"
+            }
+            stage('Packaging') {
+                echo "Packaging the code. Please wait ....................."
+                sh "sleep 5"
+            }
+            stage('Building the image') {
+                echo "Building the image. Please wait ....................."
+                sh "sleep 5"
+            }
+            stage('Pushing into Dockerhub') {
+                echo "Pushing into Dockerhub. Please wait ....................."
+                sh "sleep 5"
+            }
+            stage('Deploying To Swarm') {
+                echo "Deploying To Swarm. Please wait ....................."
+                sh "sleep 5"
+            }
+            stage('Clean up') {
+                echo "Clean up. Please wait ....................."
+                sh "sleep 5"
+            }
+            stage('List contents') {
+                echo "List contents. Please wait ....................."
+                sh """
+                    ls -l
+                    pwd
+                    cd scripts
+                    cat jenkins-master.sh
+                """
+            }
+        }
+        echo 'Pipeline succeeded!'
+        // You can add more actions for success here
+    } catch (Exception e) {
+        echo 'Pipeline failed!'
+        // You can add more actions for failure here
+        throw e
+    } finally {
+        // Clean up or post-build actions can be added here
+    }
+}

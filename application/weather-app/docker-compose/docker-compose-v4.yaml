@@ -1,0 +1,94 @@
+version: '3.8'
+services:
+  db:
+    container_name: sixfure-db
+    image: devopseasylearning/sixfure-db:develop # Specify the desired image tag here
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_DATABASE: sixfure
+      MYSQL_USER: sixfure
+      MYSQL_PASSWORD: password
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - sixfure
+    restart: always
+
+  redis:
+    container_name: sixfure-redis
+    image: devopseasylearning/sixfure-redis:develop # Specify the desired image tag here
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    environment:
+      REDIS_USER: redis
+      REDIS_PASSWORD: redis
+    volumes:
+      - redis-data:/data
+    networks:
+      - sixfure
+    restart: always
+
+  ui:
+    container_name: sixfure-ui
+    image: devopseasylearning/sixfure-ui:develop # Specify the desired image tag here
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    environment:
+      AUTH_HOST: auth
+      AUTH_PORT: 8080
+      WEATHER_HOST: weather
+      WEATHER_PORT: 5000
+      REDIS_USER: redis
+      REDIS_PASSWORD: redis
+    networks:
+      - sixfure
+    restart: always
+    depends_on:
+      - auth
+
+  weather:
+    container_name: sixfure-weather
+    image: devopseasylearning/sixfure-weather:develop # Specify the desired image tag here
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+    environment:
+      APIKEY: ecbc396f46mshb65cbb1f82cf334p1fcc87jsna5e962a3c542
+    networks:
+      - sixfure
+    restart: always
+    depends_on:
+      - db
+      - redis
+
+  auth:
+    container_name: sixfure-auth
+    image: devopseasylearning/sixfure-auth:develop # Specify the desired image tag here
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PASSWORD: my-secret-pw
+    networks:
+      - sixfure
+    expose:
+      - "8080"
+    restart: always
+    depends_on:
+      - weather
+
+networks:
+  sixfure:
+    driver: bridge
+volumes:
+  db-data:
+  redis-data:
