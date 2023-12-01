@@ -1,0 +1,257 @@
+version: '3.8'
+
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '81:81'
+    environment:
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      # Set default admin credentials
+      INITIAL_USERNAME: "admin@example.com"
+      INITIAL_PASSWORD: "changeme"
+    networks:
+      - devops_tools
+    volumes:
+      - data:/data
+      - letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+    deploy:
+      replicas: 1
+      placement:
+        # constraints: [ node.role == worker, node.role == manager ] 
+        constraints: [ node.role == manager ]
+  db:
+    image: 'jc21/mariadb-aria:latest'
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - devops_tools
+    deploy:
+      replicas: 1
+      placement:
+        # constraints: [ node.role == worker, node.role == manager ] 
+        constraints: [ node.role == manager ]
+  sonarqube:
+    image: sonarqube:latest
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=AaZA+*U]379,%UE%_Pk}
+    deploy:
+      replicas: 1
+      placement:
+        # constraints: [ node.role == worker, node.role == manager ] 
+        constraints: [ node.role == manager ]
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      # resources:
+      #   reservations:
+      #     memory: 128M
+      #     cpus: '1'
+      #   limits:
+      #     cpus: '1'
+      #     memory: 1024M
+    networks:
+      - devops_tools
+    ports:
+      - "9000:9000"
+    volumes:
+      # - /data_store/sonarqube_data:/opt/sonarqube/data
+      # - /data_store/sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+  postgres:
+    image: postgres:latest
+    hostname: postgres
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=AaZA+*U]379,%UE%_Pk}
+      - POSTGRES_DB=sonar
+      - POSTGRES_MASTER_USER=postgres_admin
+      - POSTGRES_MASTER_PASSWORD=qpp3J^ctBxYvehEtnrL!
+    deploy:
+      replicas: 1
+      placement:
+        # constraints: [ node.role == worker, node.role == manager ] 
+        constraints: [ node.role == manager ]
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      # resources:
+      #   reservations:
+      #     memory: 128M
+      #     cpus: '1'
+      #   limits:
+      #     cpus: '1'
+      #     memory: 1024M
+    networks:
+      - devops_tools
+    ports:
+      - "5432:5432"
+    volumes:
+      # - /data_store/postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=info@devopseaslearning.com
+      - PGADMIN_DEFAULT_PASSWORD=jb6R6MTk2cXF01gVcD8Z
+    deploy:
+      replicas: 1
+      placement:
+        # constraints: [ node.role == worker, node.role == manager ] 
+        constraints: [ node.role == manager ]
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+    networks:
+      - devops_tools
+    ports:
+      - "5555:80"
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    ports:
+      - "8070:8080"
+    volumes:
+      # - /data_store/jenkins_home:/var/jenkins_home
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - devops_tools
+    deploy:
+      replicas: 1
+      placement:
+        # constraints: [ node.role == worker, node.role == manager ] 
+        constraints: [ node.role == manager ]
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      # resources:
+      #   reservations:
+      #     memory: 128M
+      #     cpus: '1'
+      #   limits:
+      #     cpus: '1'
+      #     memory: 1024M
+
+      # datadog-agent:
+      #   image: gcr.io/datadoghq/agent:7
+      #   container_name: dd-agent
+      #   environment:
+      #     # - DD_API_KEY=YOUR_DD_API_KEY_HERE
+      #     - DD_API_KEY=DD_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      #     - DD_SITE=datadoghq.com
+      #     - DD_APM_ENABLED=true
+      #     - DD_APM_NON_LOCAL_TRAFFIC=true
+      #     - DD_SYSTEM_PROBE_ENABLED=true
+      #     - DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
+      #     - DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket
+      #   volumes:
+      #     - /opt/datadog/apm:/opt/datadog/apm
+      #     - /var/run/docker.sock:/var/run/docker.sock:ro
+      #     - /proc/:/host/proc/:ro
+      #     - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      #   cap_add:
+      #     - SYS_ADMIN
+      #     - NET_ADMIN
+      #   security_opt:
+      #     - apparmor:unconfined
+      #     - seccomp:unconfined
+      #   networks:
+      #     - devops_tools
+      #   deploy:
+      #     replicas: 1
+      #     restart_policy:
+      #       condition: any
+      #       delay: 5s
+      #       max_attempts: 3
+      #       window: 120s
+      #     update_config:
+      #       parallelism: 1
+      #       delay: 10s
+      #       failure_action: rollback
+      #     placement:
+      #       # constraints: [ node.role == worker, node.role == manager ]
+      #       constraints: [ node.role == manager ]
+      #   ports:
+      #     - "8125:8125/udp"
+      #     - "8126:8126/tcp"
+      # nexus:
+      #   image: 'sonatype/nexus3'
+      #   ports:
+      #     - '8081:8081'
+      #   volumes:
+      #     - nexus_data:/opt/sonatype/nexus
+      #   networks:
+      #     - devops_tools
+      #   deploy:
+      #     replicas: 1
+      #     restart_policy:
+      #       condition: any
+      #       delay: 5s
+      #       max_attempts: 3
+      #       window: 120s
+      #     update_config:
+      #       parallelism: 1
+      #       delay: 10s
+      #       failure_action: rollback
+      #     placement:
+      #       # constraints: [ node.role == worker, node.role == manager ]
+      #       constraints: [ node.role == manager ]
+
+networks:
+  devops_tools:
+    driver: overlay
+volumes:
+  jenkins_home:
+  sonarqube_data:
+  sonarqube_extensions:
+  postgres_data:
+  nexus_data:
+  data:
+  letsencrypt:
+  mysql:
+
+

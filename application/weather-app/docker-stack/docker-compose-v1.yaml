@@ -13,7 +13,7 @@ services:
       MYSQL_USER: sixfure
       MYSQL_PASSWORD: password
     volumes:
-      - ./db-data:/var/lib/mysql
+      - db-data:/var/lib/mysql
     networks:
       - sixfure
     restart: always
@@ -49,7 +49,7 @@ services:
       REDIS_USER: redis
       REDIS_PASSWORD: redis
     volumes:
-      - ./redis-data:/data
+      - redis-data:/data
     networks:
       - sixfure
     restart: always
@@ -182,3 +182,8 @@ services:
 networks:
   sixfure:
     driver: overlay
+volumes:
+  db-data:
+  redis-data:
+
+
