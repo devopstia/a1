@@ -1,0 +1,122 @@
+pipeline {
+    agent {
+        label 'master'
+    }
+    environment {
+        PLEASE_WAIT = "Please wait ............"
+        SLEEP = "sleep 5"
+    }
+    // options {
+
+    // }
+    // parameters {
+
+    // }
+    stages {
+        stage('run a script') {
+            steps {
+                script {
+                    sh """
+                        # Display the collected information
+                        echo "Username: "
+                        echo "Password:"
+                        echo "Email: "
+                        echo "First Name: "
+                        echo "Last Name: "
+                    """
+                }
+            }
+        }
+        stage('checkout') {
+            steps {
+                script {
+                    sh """
+                        echo "Checking out the repository. ${env.PLEASE_WAIT}"
+                        ${env.SLEEP}
+                    """
+                }
+            }
+        }
+        stage('Testing the code') {
+        
+            steps {
+                script {
+                    sh """
+                        echo "Testing the code. ${env.PLEASE_WAIT}"
+                        ${env.SLEEP}
+                    """
+                }
+            }
+        }
+        stage('Scanning the code') {
+            steps {
+                script {
+                    sh """
+                        echo "Scanning the code. ${env.PLEASE_WAIT}"
+                        ${env.SLEEP}
+                    """
+                }
+            }
+        }
+        stage('Building the code') {
+            steps {
+                script {
+                    sh """
+                        echo "Building the code. ${env.PLEASE_WAIT}"
+                        ${env.SLEEP}
+                    """
+                }
+            }
+        }
+        stage('Pushing the code to artifactory') {
+            steps {
+                script {
+                    sh """
+                        echo "Pushing the code to artifactory. ${env.PLEASE_WAIT}"
+                        ${env.SLEEP}
+                    """
+                }
+            }
+        }
+        stage('Deploying the code') {
+            steps {
+                script {
+                    sh """
+                        echo "Deploying the code. ${env.PLEASE_WAIT}"
+                        ${env.SLEEP}
+                    """
+                }
+            }
+        }
+        stage('Checking the container state') {
+            steps {
+                script {
+                    sh """
+                        echo "Checking the container state. ${env.PLEASE_WAIT}"
+                        ${env.SLEEP}
+                    """
+                }
+            }
+        }
+        stage('Clean Up') {
+            steps {
+                script {
+                    sh """
+                        echo "Clean Up. ${env.PLEASE_WAIT}"
+                        ${env.SLEEP}
+                    """
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+            // You can add more actions for success here
+        }
+        failure {
+            echo 'Pipeline failed!'
+            // You can add more actions for failure here
+        }
+    }
+}

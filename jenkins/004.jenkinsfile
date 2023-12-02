@@ -1,0 +1,134 @@
+pipeline {
+    agent none
+    // agent {
+    //     label 'master'
+    // }
+    // trigger {
+
+    // }
+    // environment {
+
+    // }
+    // options {
+
+    // }
+    // parameters {
+
+    // }
+    stages {
+        stage('checkout') {
+            agent {
+                label 'master'
+            }
+            steps {
+                script {
+                    sh """
+                        echo "Checking out the repository. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Testing the code') {
+            agent {
+                label 'master'
+            }
+            steps {
+                script {
+                    sh """
+                        echo "Testing the code. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Scanning the code') {
+            agent {
+                label 'master'
+            }
+            steps {
+                script {
+                    sh """
+                        echo "Scanning the code. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Building the code') {
+            agent {
+                label 'master'
+            }
+            steps {
+                script {
+                    sh """
+                        echo "Building the code. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Pushing the code to artifactory') {
+            agent {
+                label 'master'
+            }
+            steps {
+                script {
+                    sh """
+                        echo "Pushing the code to artifactory. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Deploying the code') {
+            agent {
+                label 'master'
+            }
+            steps {
+                script {
+                    sh """
+                        echo "Deploying the code. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Checking the container state') {
+            agent {
+                label 'master'
+            }
+            steps {
+                script {
+                    sh """
+                        echo "Checking the container state. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Clean Up') {
+            agent {
+                label 'master'
+            }
+            steps {
+                script {
+                    sh """
+                        echo "Clean Up. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+            // You can add more actions for success here
+        }
+        failure {
+            echo 'Pipeline failed!'
+            // You can add more actions for failure here
+        }
+    }
+}

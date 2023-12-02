@@ -1,0 +1,95 @@
+pipeline {
+    agent any
+    stages {
+        stage('checkout') {
+            steps {
+                script {
+                    sh """
+                        echo "Checking out the repository. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Testing the code') {
+            steps {
+                script {
+                    sh """
+                        echo "Testing the code. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Scanning the code') {
+            steps {
+                script {
+                    sh """
+                        echo "Scanning the code. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Building the code') {
+            steps {
+                script {
+                    sh """
+                        echo "Building the code. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Pushing the code to artifactory') {
+            steps {
+                script {
+                    sh """
+                        echo "Pushing the code to artifactory. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Deploying the code') {
+            steps {
+                script {
+                    sh """
+                        echo "Deploying the code. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Checking the container state') {
+            steps {
+                script {
+                    sh """
+                        echo "Checking the container state. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+        stage('Clean Up') {
+            steps {
+                script {
+                    sh """
+                        echo "Clean Up. Please wait ............"
+                        sleep 5
+                    """
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+            // You can add more actions for success here
+        }
+        failure {
+            echo 'Pipeline failed!'
+            // You can add more actions for failure here
+        }
+    }
+}

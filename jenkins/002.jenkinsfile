@@ -1,0 +1,44 @@
+node {
+    stage('Checkout') {
+        echo "Checking out the repository. Please wait ............"
+        sh 'sleep 5'
+    }
+
+    stage('Testing the code') {
+        echo "Testing the code. Please wait ............"
+        sh 'sleep 5'
+    }
+
+    stage('Scanning the code') {
+        echo "Scanning the code. Please wait ............"
+        sh 'sleep 5'
+    }
+
+    stage('Building the code') {
+        echo "Building the code. Please wait ............"
+        sh 'sleep 5'
+    }
+
+    stage('Pushing the code to Artifactory') {
+        echo "Pushing the code to Artifactory. Please wait ............"
+        sh 'sleep 5'
+    }
+
+    stage('Deploying the code') {
+        echo "Deploying the code. Please wait ............"
+        sh 'sleep 5'
+    }
+
+    stage('Checking the container state') {
+        echo "Checking the container state. Please wait ............"
+        sh 'sleep 5'
+    }
+
+    stage('Clean Up') {
+        echo "Clean Up. Please wait ............"
+        sh 'sleep 5'
+    }
+
+    echo 'Pipeline succeeded!'
+    // You can add more actions for success here
+}
