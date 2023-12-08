@@ -4,7 +4,7 @@ pipeline {
     }
     environment {
         PLEASE_WAIT = "Please wait ............"
-        SLEEP = "sleep 1"
+        SLEEP = "sleep 5"
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '7'))
@@ -22,23 +22,6 @@ pipeline {
                 dir("${WORKSPACE}/a1-repo") {
                     checkout([
                         $class: 'GitSCM',
-                        branches: [[name: "*/main"]],
-                        doGenerateSubmoduleConfigurations: false,
-                        extensions: [[$class: 'LocalBranch']],
-                        submoduleCfg: [],
-                        userRemoteConfigs: [[
-                        url: 'https://github.com/devopstia/a1.git',
-                        credentialsId: 'github-auth'
-                        ]]
-                    ])
-                }
-            }
-        }
-        stage ('Checkout1-1') {
-            steps {
-                dir("${WORKSPACE}/argo-repo") {
-                    checkout([
-                        $class: 'GitSCM',
                         branches: [[name: "*/master"]],
                         doGenerateSubmoduleConfigurations: false,
                         extensions: [[$class: 'LocalBranch']],
@@ -51,38 +34,56 @@ pipeline {
                 }
             }
         }
-        stage('Checkout2') {
+        // stage('Checkout3') {
+        //     steps {
+        //        checkout([
+        //             $class: 'GitSCM',
+        //             branches: [[name: "*/master"]],
+        //             doGenerateSubmoduleConfigurations: false,
+        //             extensions: [[$class: 'LocalBranch']],
+        //             submoduleCfg: [],
+        //             userRemoteConfigs: [[
+        //             url: 'https://github.com/devopstia/argocd-example-apps.git',
+        //             credentialsId: 'github-auth'
+        //             ]]
+        //         ]) 
+        //     }
+        // }
+        stage('ls repo 1') {
             steps {
-               checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "*/main"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'LocalBranch']],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [[
-                    url: 'https://github.com/devopstia/a1.git',
-                    credentialsId: 'github-auth'
-                    ]]
-                ]) 
+                script {
+                    dir("${WORKSPACE}/a1-repo/ksonnet-guestbook") {
+                        sh """
+                            ls -l
+                            cat app.yaml
+                        """
+                    }
+                }
             }
         }
-        stage('Checkout3') {
+        stage('ls repo 2') {
             steps {
-               checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: "*/master"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'LocalBranch']],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [[
-                    url: 'https://github.com/devopstia/argocd-example-apps.git',
-                    credentialsId: 'github-auth'
-                    ]]
-                ]) 
+                script {
+                    dir("/var/lib/jenkins/workspace/teams-testing/tia/a1/a1-repo") {
+                        sh """
+                            ls -l
+                        """
+                    }
+                }
+            }
+        }
+        stage('ls repo 3') {
+            steps {
+                script {
+                    sh """
+                        cd "${WORKSPACE}/a1-repo/ksonnet-guestbook"
+                        ls
+                        cat app.yaml
+                    """
+                }
             }
         }
         stage('Testing the code') {
-        
             steps {
                 script {
                     sh """
