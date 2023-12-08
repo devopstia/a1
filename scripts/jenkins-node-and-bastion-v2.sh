@@ -254,7 +254,7 @@ function enable_password_authentication {
 
 function ssh_key {
     sudo su - jenkins 
-    ssh-keygen -t rsa -f ~/.ssh/id_rsa -N "" || true
+    ssh-keygen -t rsa -f /home/jenkins/.ssh/id_rsa -N "" || true
     echo
     echo
     echo 'Below is ssh private key that you need in jenkins for ssh repo checkout -------------------------------' 
