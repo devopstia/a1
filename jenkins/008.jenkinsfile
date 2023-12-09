@@ -2,166 +2,46 @@ pipeline {
     agent {
         label 'master'
     }
-    environment {
-        PLEASE_WAIT = "Please wait ............"
-        SLEEP = "sleep 5"
-    }
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '7'))
-        // skipDefaultCheckout(true)
-        disableConcurrentBuilds()
-        timeout (time: 1, unit: 'MINUTES')
-        timestamps()
-    }
-    // parameters {
 
-    // }
-    stages {
-        stage ('Checkout1-0') {
-            steps {
-                dir("${WORKSPACE}/a1-repo") {
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: "*/master"]],
-                        doGenerateSubmoduleConfigurations: false,
-                        extensions: [[$class: 'LocalBranch']],
-                        submoduleCfg: [],
-                        userRemoteConfigs: [[
-                        url: 'https://github.com/devopstia/argocd-example-apps.git',
-                        credentialsId: 'github-auth'
-                        ]]
-                    ])
-                }
-            }
-        }
-        // stage('Checkout3') {
-        //     steps {
-        //        checkout([
-        //             $class: 'GitSCM',
-        //             branches: [[name: "*/master"]],
-        //             doGenerateSubmoduleConfigurations: false,
-        //             extensions: [[$class: 'LocalBranch']],
-        //             submoduleCfg: [],
-        //             userRemoteConfigs: [[
-        //             url: 'https://github.com/devopstia/argocd-example-apps.git',
-        //             credentialsId: 'github-auth'
-        //             ]]
-        //         ]) 
-        //     }
-        // }
-        stage('ls repo 1') {
-            steps {
-                script {
-                    dir("${WORKSPACE}/a1-repo/ksonnet-guestbook") {
-                        sh """
-                            ls -l
-                            cat app.yaml
-                        """
-                    }
-                }
-            }
-        }
-        stage('ls repo 2') {
-            steps {
-                script {
-                    dir("/var/lib/jenkins/workspace/teams-testing/tia/a1/a1-repo") {
-                        sh """
-                            ls -l
-                        """
-                    }
-                }
-            }
-        }
-        stage('ls repo 3') {
-            steps {
-                script {
-                    sh """
-                        cd "${WORKSPACE}/a1-repo/ksonnet-guestbook"
-                        ls
-                        cat app.yaml
-                    """
-                }
-            }
-        }
-        stage('Testing the code') {
-            steps {
-                script {
-                    sh """
-                        echo "Testing the code. ${env.PLEASE_WAIT}"
-                        ${env.SLEEP}
-                    """
-                }
-            }
-        }
-        stage('Scanning the code') {
-            steps {
-                script {
-                    sh """
-                        echo "Scanning the code. ${env.PLEASE_WAIT}"
-                        ${env.SLEEP}
-                    """
-                }
-            }
-        }
-        stage('Building the code') {
-            steps {
-                script {
-                    sh """
-                        echo "Building the code. ${env.PLEASE_WAIT}"
-                        ${env.SLEEP}
-                    """
-                }
-            }
-        }
-        stage('Pushing the code to artifactory') {
-            steps {
-                script {
-                    sh """
-                        echo "Pushing the code to artifactory. ${env.PLEASE_WAIT}"
-                        ${env.SLEEP}
-                    """
-                }
-            }
-        }
-        stage('Deploying the code') {
-            steps {
-                script {
-                    sh """
-                        echo "Deploying the code. ${env.PLEASE_WAIT}"
-                        ${env.SLEEP}
-                    """
-                }
-            }
-        }
-        stage('Checking the container state') {
-            steps {
-                script {
-                    sh """
-                        echo "Checking the container state. ${env.PLEASE_WAIT}"
-                        ${env.SLEEP}
-                    """
-                }
-            }
-        }
-        stage('Clean Up') {
-            steps {
-                script {
-                    sh """
-                        echo "Clean Up. ${env.PLEASE_WAIT}"
-                        ${env.SLEEP}
-                    """
-                }
-            }
-        }
+    parameters {
+        string(name: 'USERNAME', defaultValue: 'tia', description: 'Enter username')
+        password(name: 'PASSWORD', defaultValue: '12345', description: 'Enter password')
+        string(name: 'EMAIL', defaultValue: 'tia.com', description: 'Enter email')
+        string(name: 'FIRSTNAME', defaultValue: 'leo', description: 'Enter first name')
+        string(name: 'LASTNAME', defaultValue: 'tia', description: 'Enter last name')
     }
-    post {
-        success {
-            echo 'Pipeline succeeded!'
-            // You can add more actions for success here
+
+    stages {
+        stage('Collect Information 1') {
+            steps {
+                script {
+                    def username = params.USERNAME
+                    def password = params.PASSWORD
+                    def email = params.EMAIL
+                    def firstname = params.FIRSTNAME
+                    def lastname = params.LASTNAME
+
+                    echo "Username: $username"
+                    echo "Email: $email"
+                    echo "First Name: $firstname"
+                    echo "Last Name: $lastname"
+
+                    // You can perform further actions with the collected information here
+                }
+            }
         }
-        failure {
-            echo 'Pipeline failed!'
-            // You can add more actions for failure here
+        stage('Collect Information 2') {
+            steps {
+                script {
+                    echo "Username: ${params.USERNAME}"
+                    echo "Password : ${params.PASSWORD}"
+                    echo "Email: ${params.EMAIL}"
+                    echo "First Name: ${params.FIRSTNAME}"
+                    echo "Last Name: ${params.LASTNAME}"
+
+                    // You can perform further actions with the collected information here
+                }
+            }
         }
     }
 }
