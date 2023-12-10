@@ -1,0 +1,47 @@
+pipeline {
+    agent {
+        label 'master'
+    }
+
+    parameters {
+        string(name: 'USERNAME', defaultValue: 'tia', description: 'Enter username')
+        password(name: 'PASSWORD', defaultValue: '12345', description: 'Enter password')
+        string(name: 'EMAIL', defaultValue: 'tia.com', description: 'Enter email')
+        string(name: 'FIRSTNAME', defaultValue: 'leo', description: 'Enter first name')
+        string(name: 'LASTNAME', defaultValue: 'tia', description: 'Enter last name')
+    }
+
+    stages {
+        stage('Collect Information 1') {
+            steps {
+                script {
+                    def username = params.USERNAME
+                    def password = params.PASSWORD
+                    def email = params.EMAIL
+                    def firstname = params.FIRSTNAME
+                    def lastname = params.LASTNAME
+
+                    echo "Username: $username"
+                    echo "Email: $email"
+                    echo "First Name: $firstname"
+                    echo "Last Name: $lastname"
+
+                    // You can perform further actions with the collected information here
+                }
+            }
+        }
+        stage('Collect Information 2') {
+            steps {
+                script {
+                    echo "Username: ${params.USERNAME}"
+                    echo "Password : ${params.PASSWORD}"
+                    echo "Email: ${params.EMAIL}"
+                    echo "First Name: ${params.FIRSTNAME}"
+                    echo "Last Name: ${params.LASTNAME}"
+
+                    // You can perform further actions with the collected information here
+                }
+            }
+        }
+    }
+}

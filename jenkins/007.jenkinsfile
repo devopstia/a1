@@ -4,27 +4,81 @@ pipeline {
     }
     environment {
         PLEASE_WAIT = "Please wait ............"
-        SLEEP = "sleep 5"
+        SLEEP = "sleep 1"
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '7'))
         // skipDefaultCheckout(true)
         disableConcurrentBuilds()
-        timeout (time: 7, unit: 'MINUTES')
+        timeout (time: 1, unit: 'MINUTES')
         timestamps()
     }
     // parameters {
 
     // }
     stages {
-        stage('checkout') {
+        stage ('Checkout1-0') {
             steps {
-                script {
-                    sh """
-                        echo "Checking out the repository. ${env.PLEASE_WAIT}"
-                        ${env.SLEEP}
-                    """
+                dir("${WORKSPACE}/a1-repo") {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "*/main"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'LocalBranch']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[
+                        url: 'https://github.com/devopstia/a1.git',
+                        credentialsId: 'github-auth'
+                        ]]
+                    ])
                 }
+            }
+        }
+        stage ('Checkout1-1') {
+            steps {
+                dir("${WORKSPACE}/argo-repo") {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "*/master"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'LocalBranch']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[
+                        url: 'https://github.com/devopstia/argocd-example-apps.git',
+                        credentialsId: 'github-auth'
+                        ]]
+                    ])
+                }
+            }
+        }
+        stage('Checkout2') {
+            steps {
+               checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "*/main"]],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [[$class: 'LocalBranch']],
+                    submoduleCfg: [],
+                    userRemoteConfigs: [[
+                    url: 'https://github.com/devopstia/a1.git',
+                    credentialsId: 'github-auth'
+                    ]]
+                ]) 
+            }
+        }
+        stage('Checkout3') {
+            steps {
+               checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "*/master"]],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [[$class: 'LocalBranch']],
+                    submoduleCfg: [],
+                    userRemoteConfigs: [[
+                    url: 'https://github.com/devopstia/argocd-example-apps.git',
+                    credentialsId: 'github-auth'
+                    ]]
+                ]) 
             }
         }
         stage('Testing the code') {
