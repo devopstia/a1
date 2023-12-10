@@ -81,4 +81,5 @@ PLEASE REVIEW THIS POWERPOINT: https://docs.google.com/presentation/d/1G4FbNJeiK
 - if, elif and else
 - and and or
 - labels
+- Conditions
 - approval before deployment
