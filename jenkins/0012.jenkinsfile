@@ -11,6 +11,11 @@ pipeline {
     }
     parameters {
         string(name: 'BRANCH_NAME', defaultValue: 'main', description: '')
+        choice(
+            name: 'PACKAGES',
+            choices: ['', 'vim', 'wget', 'unzip', 'curl'],
+            description: ''
+        )
     }
     stages {
         stage ('Checkout') {
@@ -36,6 +41,8 @@ pipeline {
                     dir("${WORKSPACE}/code/jenkins/scripts") {
                         sh """
                             ls -l
+                            sudo chmod +x user-management-packages.sh
+                            sudo bash user-management-packages.sh ${params.PACKAGES}
                         """
                     }
                 }

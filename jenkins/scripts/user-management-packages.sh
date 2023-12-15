@@ -6,12 +6,15 @@
 # centos = CentOS Linux
 # amazon-ec2 = Amazon Linux
 
+PACKAGES=$1
+
 OS_NAME=$(cat /etc/*release |grep -w NAME |awk -F'"' '{print$2}')
 
 function ubuntu {
     echo "This is $OS_NAME OS."
     sleep 5
     apt update -y
+    apt install -y $PACKAGES
 }
 
 function centos_redhat_ec2 {

@@ -13,8 +13,6 @@ pipeline {
     }
 }
 
-
-
 def run_script() {
     sh """
     #!/bin/bash
