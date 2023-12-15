@@ -12,6 +12,7 @@ PASSWORD=$3
 EMAIL=$4
 FIRSTNAME=$5
 LASTNAME=$6
+ACCOUNT_MANAGEMENT=$7
 
 OS_NAME=$(cat /etc/*release |grep -w NAME |awk -F'"' '{print$2}')
 
@@ -42,6 +43,7 @@ echo "Password : ${PASSWORD}"
 echo "Email: ${EMAIL}"
 echo "First Name: ${FIRSTNAME}"
 echo "Last Name: ${LASTNAME}"
+echo "Account managemnet: ${ACCOUNT_MANAGEMENT}"
 
 manage_user_account() {
     if [ "$1" == "add_user" ]; then
