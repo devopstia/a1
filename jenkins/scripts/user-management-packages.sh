@@ -14,7 +14,7 @@ FIRSTNAME=$5
 LASTNAME=$6
 ACCOUNT_MANAGEMENT=$7
 
-OS_NAME=$(cat /etc/*release |grep -w NAME |awk -F'"' '{print$2}')
+OS_NAME=$(cat /etc/*release |grep -w NAME |awk -F'"' '{print${USERNAME}}')
 
 function ubuntu {
     echo "This is $OS_NAME OS."
@@ -46,44 +46,44 @@ echo "Last Name: ${LASTNAME}"
 echo "Account managemnet: ${ACCOUNT_MANAGEMENT}"
 
 manage_user_account() {
-    if [ "$7" == "add_user" ]; then
-        if ! grep -q "^$2:" /etc/passwd; then
-            sudo useradd -m "$2"
-            echo "$2:$3" | sudo chpasswd
-            sudo usermod -c "$5 $6" "$2"
-            sudo cat /etc/passwd | grep "$2"
-            sudo cat /etc/shadow | grep "$2"
+    if [ "${ACCOUNT_MANAGEMENT}" == "add_user" ]; then
+        if ! grep -q "^${USERNAME}:" /etc/passwd; then
+            sudo useradd -m "${USERNAME}"
+            echo "${USERNAME}:${PASSWORD}" | sudo chpasswd
+            sudo usermod -c "${FIRSTNAME} ${LASTNAME}" "${USERNAME}"
+            sudo cat /etc/passwd | grep "${USERNAME}"
+            sudo cat /etc/shadow | grep "${USERNAME}"
             ls /home
         else
-            echo "User $2 already exists"
+            echo "User ${USERNAME} already exists"
         fi
-    elif [ "$7" == "delete_user" ]; then
-        if ! grep -q "^$2:" /etc/passwd; then
-            echo "User $2 does not exist"
+    elif [ "${ACCOUNT_MANAGEMENT}" == "delete_user" ]; then
+        if ! grep -q "^${USERNAME}:" /etc/passwd; then
+            echo "User ${USERNAME} does not exist"
         else
-            sudo userdel -r "$2"
-            echo "The user $2 with password $3 has been deleted"
-            sudo cat /etc/passwd | grep "$2" || true
-            sudo cat /etc/shadow | grep "$2" || true
+            sudo userdel -r "${USERNAME}"
+            echo "The user ${USERNAME} with password ${PASSWORD} has been deleted"
+            sudo cat /etc/passwd | grep "${USERNAME}" || true
+            sudo cat /etc/shadow | grep "${USERNAME}" || true
         fi
-    elif [ "$7" == "lock_user" ]; then
-        if ! grep -q "^$2:" /etc/passwd; then
-            echo "User $2 does not exist"
+    elif [ "${ACCOUNT_MANAGEMENT}" == "lock_user" ]; then
+        if ! grep -q "^${USERNAME}:" /etc/passwd; then
+            echo "User ${USERNAME} does not exist"
         else
-            sudo passwd -l "$2"
-            echo "The user $2 with password $3 has been locked"
-            sudo cat /etc/shadow | grep "$2"
+            sudo passwd -l "${USERNAME}"
+            echo "The user ${USERNAME} with password ${PASSWORD} has been locked"
+            sudo cat /etc/shadow | grep "${USERNAME}"
         fi
-    elif [ "$7" == "unlock_user" ]; then
-        if ! grep -q "^$2:" /etc/passwd; then
-            echo "User $2 does not exist"
+    elif [ "${ACCOUNT_MANAGEMENT}" == "unlock_user" ]; then
+        if ! grep -q "^${USERNAME}:" /etc/passwd; then
+            echo "User ${USERNAME} does not exist"
         else
-            sudo passwd -u "$2"
-            echo "The user $2 with password $3 has been unlocked"
-            sudo cat /etc/shadow | grep "$2"
+            sudo passwd -u "${USERNAME}"
+            echo "The user ${USERNAME} with password ${PASSWORD} has been unlocked"
+            sudo cat /etc/shadow | grep "${USERNAME}"
         fi
     else
-        echo "Invalid ACCOUNT_MANAGEMENT action: $7"
+        echo "Invalid ACCOUNT_MANAGEMENT action: ${ACCOUNT_MANAGEMENT}"
     fi
 }
 
