@@ -86,3 +86,5 @@ manage_user_account() {
         echo "Invalid ACCOUNT_MANAGEMENT action: $7"
     fi
 }
+
+manage_user_account
