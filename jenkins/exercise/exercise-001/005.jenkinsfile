@@ -1,0 +1,177 @@
+pipeline {
+    agent 'any'
+
+    parameters {
+        string(name: 'USERNAME', defaultValue: '', description: 'Enter username')
+        string(name: 'PASSWORD', defaultValue: '', description: 'Enter password')
+        string(name: 'EMAIL', defaultValue: '', description: 'Enter email')
+        string(name: 'FIRSTNAME', defaultValue: '', description: 'Enter first name')
+        string(name: 'LASTNAME', defaultValue: '', description: 'Enter last name')
+        string(name: 'GROUP_NAME', defaultValue: '', description: 'Enter group name')
+
+        choice(
+            name: 'ACCOUNT_MANAGEMENT',
+            choices: ['', 'add_user', 'delete_user', 'lock_user', 'unlock_user', 'create_group' 'add_to_group'],
+            description: ''
+        )
+    }
+
+    stages {
+        stage('Sanity Check') {
+            steps {
+                script {
+                    sanity_check()
+                }
+            }
+        }
+        stage('Collect Information') {
+            steps {
+                script {
+                    collect_information()
+                }
+            }
+        }
+        stage('Create User Account') {
+            when {
+                expression { params.ACCOUNT_MANAGEMENT == 'add_user' }
+            }
+            steps {
+                script {
+                    create_user_account()
+                }
+            }
+        }
+        stage('Delete User Account') {
+            when {
+                expression { params.ACCOUNT_MANAGEMENT == 'delete_user' }
+            }
+            steps {
+                script {
+                    delete_user_account()
+                }
+            }
+        }
+        stage('Lock User Account') {
+            when {
+                expression { params.ACCOUNT_MANAGEMENT == 'lock_user' }
+            }
+            steps {
+                script {
+                    lock_user_account()
+                }
+            }
+        }
+        stage('Unlock User Account') {
+            when {
+                expression { params.ACCOUNT_MANAGEMENT == 'unlock_user' }
+            }
+            steps {
+                script {
+                    unlock_user_account()
+                }
+            }
+        }
+        stage('Create Group') {
+            when {
+                expression { params.ACCOUNT_MANAGEMENT == 'create_group' }
+            }
+            steps {
+                script {
+                    create_group()
+                }
+            }
+        }
+        stage('Add User to Group') {
+            when {
+                expression { params.ACCOUNT_MANAGEMENT == 'add_to_group' }
+            }
+            steps {
+                script {
+                    add_user_to_group()
+                }
+            }
+        }
+    }
+}
+
+def sanity_check() {
+    if (params.USERNAME.isEmpty()){
+       echo "The parameter USERNAME is not set"
+       sh 'exit 2'
+   } 
+    if (params.PASSWORD.isEmpty()){
+      echo "The parameter PASSWORD is not set"
+      sh 'exit 2'
+   }
+   if (params.EMAIL.isEmpty()){
+       echo "The parameter EMAIL is not set"
+       sh 'exit 2'
+   }
+   if (params.FIRSTNAME.isEmpty()){
+       echo "The parameter FIRSTNAME is not set"
+       sh 'exit 2'
+   }
+   if (params.LASTNAME.isEmpty()){
+       echo "The parameter LASTNAME is not set"
+       sh 'exit 2'
+   }
+}
+
+def collect_information() {
+    sh """
+        echo "Username: ${params.USERNAME}"
+        echo "Password : ${params.PASSWORD}"
+        echo "Email: ${params.EMAIL}"
+        echo "First Name: ${params.FIRSTNAME}"
+        echo "Last Name: ${params.LASTNAME}"
+    """
+}
+
+def create_user_account() {
+    sh """
+        sudo useradd -m ${params.USERNAME}
+        sudo echo "${params.USERNAME}:${params.PASSWORD}" | sudo -S chpasswd
+        sudo usermod -c "${params.FIRSTNAME} ${params.LASTNAME}" ${params.USERNAME}
+        sudo cat /etc/passwd
+        sudo cat /etc/shadow
+        sudo cat /etc/group
+        ls /home
+    """
+}
+
+def delete_user_account() {
+    sh """
+        sudo userdel -r ${params.USERNAME}
+        echo "User ${params.USERNAME} has been deleted."
+        sudo cat /etc/passwd
+    """
+}
+
+def lock_user_account() {
+    sh """
+        sudo usermod -L ${params.USERNAME}
+        echo "User ${params.USERNAME} has been locked."
+    """
+}
+
+def unlock_user_account() {
+    sh """
+        sudo usermod -U ${params.USERNAME}
+        echo "User ${params.USERNAME} has been unlocked."
+    """
+}
+def create_group() {
+    sh """
+        sudo groupadd ${params.GROUP_NAME}
+        echo "Group ${params.GROUP_NAME} has been created."
+        sudo cat /etc/group
+    """
+}
+def add_user_to_group() {
+    sh """
+        sudo usermod -aG ${params.GROUP_NAME} ${params.USERNAME}
+        echo "User ${params.USERNAME} has been added to group ${params.GROUP_NAME}."
+        sudo cat /etc/passwd
+        sudo cat /etc/group
+    """
+}

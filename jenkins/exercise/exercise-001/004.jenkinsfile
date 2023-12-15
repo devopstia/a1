@@ -1,0 +1,57 @@
+pipeline {
+    agent {
+        label 'master'
+    }
+
+    parameters {
+        string(name: 'USERNAME', defaultValue: '', description: 'Enter username')
+        string(name: 'PASSWORD', defaultValue: '', description: 'Enter password')
+        string(name: 'EMAIL', defaultValue: '', description: 'Enter email')
+        string(name: 'FIRSTNAME', defaultValue: '', description: 'Enter first name')
+        string(name: 'LASTNAME', defaultValue: '', description: 'Enter last name')
+
+        choice(
+            name: 'ACCOUNT_MANAGEMENT',
+            choices: ['', 'add_user', 'delete_user', 'lock_user', 'unlock_user'],
+            description: ''
+        )
+    }
+
+    stages {
+        stage('Account Management') {
+            steps {
+    script {
+        // Check the value of ACCOUNT_MANAGEMENT and execute the corresponding stage
+        if (params.ACCOUNT_MANAGEMENT == 'add_user') {
+            echo 'Adding User'
+            sh "sudo useradd -m ${params.USERNAME}"
+            sh "echo '${params.USERNAME}:password' | sudo chpasswd"          
+        } else if (params.ACCOUNT_MANAGEMENT == 'delete_user') {
+            echo 'Deleting User'
+            sh "sudo userdel -r ${params.USERNAME}"
+        } else if (params.ACCOUNT_MANAGEMENT == 'lock_user') {
+            echo 'Locking User'
+            sh "sudo passwd -l ${params.USERNAME}"
+        } else if (params.ACCOUNT_MANAGEMENT == 'unlock_user') {
+            echo 'Unlocking User Account'
+            sh "sudo passwd -u ${params.USERNAME}"
+        } else {
+            echo 'No valid ACCOUNT_MANAGEMENT option selected'
+        }
+    }
+}
+
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+            // You can add more actions for success here
+        }
+        failure {
+            echo 'Pipeline failed!'
+            // You can add more actions for failure here
+        }
+    }
+}

@@ -1,0 +1,72 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'USERNAME', defaultValue: '', description: 'Enter username')
+        string(name: 'PASSWORD', defaultValue: '', description: 'Enter password')
+        string(name: 'EMAIL', defaultValue: '', description: 'Enter email')
+        string(name: 'FIRSTNAME', defaultValue: '', description: 'Enter first name')
+        string(name: 'LASTNAME', defaultValue: '', description: 'Enter last name')
+        choice(
+            name: 'ACCOUNT_MANAGEMENT',
+            choices: ['', 'add_user', 'delete_user', 'lock_user', 'unlock_user'],
+            description: 'Select an account management action'
+        )
+    }
+
+    stages {
+    //     stage('Sanity Check') {
+    //         steps {
+    //             script {
+    //                 // Check if required parameters are provided
+    //                 // ... (Your existing validation checks)
+    //             }
+    //         }
+    //     }
+        // stage('Collect Information') {
+        //     steps {
+        //         script {
+        //             // Echo provided parameters
+        //             // ... (Your existing parameter echoing)
+        //         }
+        //     }
+        // }
+        stage('Account Management') {
+            when {
+                expression { params.ACCOUNT_MANAGEMENT != '' }
+            }
+            steps {
+                script {
+                    // Execute actions based on selected choice
+                    switch (params.ACCOUNT_MANAGEMENT) {
+                        case 'add_user':
+                            sh """
+                                sudo useradd -m ${params.USERNAME}
+                            """
+                            break
+                        case 'delete_user':
+                            sh """
+                                 sudo userdel -r ${params.USERNAME}
+                            """
+                            break
+                        case 'lock_user':
+                            sh """
+                                
+                                 sudo usermod -L ${params.USERNAME}
+                            """
+                            break
+                        case 'unlock_user':
+                            sh """
+                                
+                                 sudo usermod -U ${params.USERNAME}
+                            """
+                            break
+                        default:
+                            echo 'No valid action selected'
+                            break
+                    }
+                }
+            }
+        }
+    }
+}
