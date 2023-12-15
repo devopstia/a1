@@ -37,11 +37,11 @@ else
 fi
 
 
-echo "Username: ${params.USERNAME}"
-echo "Password : ${params.PASSWORD}"
-echo "Email: ${params.EMAIL}"
-echo "First Name: ${params.FIRSTNAME}"
-echo "Last Name: ${params.LASTNAME}"
+echo "Username: ${USERNAME}"
+echo "Password : ${PASSWORD}"
+echo "Email: ${EMAIL}"
+echo "First Name: ${FIRSTNAME}"
+echo "Last Name: ${LASTNAME}"
 
 manage_user_account() {
     if [ "$1" == "add_user" ]; then
