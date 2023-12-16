@@ -14,7 +14,7 @@ FIRSTNAME=$5
 LASTNAME=$6
 ACCOUNT_MANAGEMENT=$7
 
-OS_NAME=$(cat /etc/*release |grep -w NAME |awk -F'"' '{print${USERNAME}}')
+OS_NAME=$(cat /etc/*release |grep -w NAME |awk -F'"' '{print$2}')
 
 function ubuntu {
     echo "This is $OS_NAME OS."
