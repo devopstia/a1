@@ -1,5 +1,3 @@
-
-
 name="Paul Smith"
 age="45"
 

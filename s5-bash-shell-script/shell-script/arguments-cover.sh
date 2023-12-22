@@ -50,3 +50,46 @@ Sincerely,
 
 $YOUR_NAME
 EOF
+
+
+A="1"
+B="2"
+C="3"
+D="4"
+F="5"
+
+
+echo $A
+echo $B
+echo $C
+echo $D
+echo $F
+
+SCRIPT_NAME=$0
+A=$1
+B=$2
+C=$3
+D=$4
+F=$5
+
+A1=$6
+B2=$7
+C3=$8
+D4=$9
+F5=${10}
+Z6=${11}
+
+echo "You most add execute permission before running $SCRIPT_NAME"
+echo $A
+echo $B
+echo $C
+echo $D
+echo $F
+
+echo $A1
+echo $B2
+echo $C3
+echo $D4
+echo $F5
+echo $Z6
+

@@ -57,3 +57,18 @@ else
 fi
 
 
+#!/bin/bash
+
+VAR1=2
+VAR2=3
+
+VAR1="2"
+VAR2="3"
+
+
+if [[ "$VAR1" -eq "$VAR2" ]]; then
+    echo "Strings are equal."
+else
+    echo "Strings are not equal."
+fi
+
