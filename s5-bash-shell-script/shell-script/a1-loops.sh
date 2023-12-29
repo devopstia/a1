@@ -152,7 +152,47 @@ do
 done
 
 
+## =======================================================
+#!/bin/bash
+for y in `(ls -l /home/ |awk '{print$9}')`
+do
+    if [[ -d /home/$y ]]
+    then 
+        cd /home/$y && rm -rf us_presidents.csv
+    fi
+done
 
+#!/bin/bash
+for y in `(ls -l /home/ |awk '{print$9}')`
+do
+    if [[ -d /home/$y ]]
+    then 
+        cp /tmp/us_presidents.csv /home/$y
+    fi
+done
+
+
+#!/bin/bash
+for y in `(ls -l |awk '{print$9}')`
+do
+    if [[ -d $y ]]
+    then 
+        echo "directory: $y"
+    fi
+done
+
+#!/bin/bash
+for y in `(ls -l |awk '{print$9}')`
+do
+    if [[ -f $y ]]
+    then 
+        echo "directory: $y"
+    fi
+done
+
+
+## =======================================================
+#!/bin/bash
 vim us_presidents.csv 
 cat us_presidents.csv 
 cat us_presidents.csv | cut -f2 
@@ -183,3 +223,30 @@ function user_add() {
         echo -e "$PASSWORD\n$PASSWORD" | passwd "$FIRST_NAME"
     done
 }
+
+
+
+for number in {1..5}
+do
+    sleep 1
+    echo "Current number is: $number"
+done
+
+
+
+function my_function {
+    for number in {1..5}
+    do
+        sleep 1
+        echo "Current number is: $number"
+    done
+}
+
+# Without the function keyword
+another_function() {
+    # function body
+    echo "Hello from another_function"
+}
+
+my_function
+another_function
