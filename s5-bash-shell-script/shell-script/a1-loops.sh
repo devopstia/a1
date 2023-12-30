@@ -204,8 +204,6 @@ cat us_presidents.csv | cut -f2 |cut -d" " -f1 |tr 'A-Z' 'a-z' |sort |sort -u |w
 cat us_presidents.csv | cut -f2 |cut -d" " -f1 |tr 'A-Z' 'a-z' |sort |sort -u > /tmp/users.txt
 
 
-
-
 #!/bin/bash
 cat << EOF > /tmp/users.txt
 ericsu
