@@ -164,7 +164,7 @@ services:
     container_name: sixfure-auth
     image: devopseasylearning/sixfure-auth:AUTH_IMAGE_VERSION # Specify the desired image tag here
     ports:
-      - "8080:8080"
+      - "8070:8080"
     environment:
       DB_HOST: db
       DB_PASSWORD: my-secret-pw
