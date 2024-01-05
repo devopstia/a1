@@ -68,7 +68,7 @@ services:
       - sixfure_bridge
     restart: always
     depends_on:
-      - sixfure-db
+      - db
       - sixfure-redis
 
   sixfure-auth:
