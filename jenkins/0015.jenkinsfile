@@ -11,6 +11,11 @@ pipeline {
     }
     parameters {
         string(name: 'BRANCH_NAME', defaultValue: 'main', description: '')
+        string(name: 'DB_IMAGE_VERSION', defaultValue: 'develop', description: '')
+        string(name: 'REDIS_IMAGE_VERSION', defaultValue: 'develop', description: '')
+        string(name: 'UI_IMAGE_VERSION', defaultValue: 'develop', description: '')
+        string(name: 'WEATHER_IMAGE_VERSION', defaultValue: 'develop', description: '')
+        string(name: 'AUTH_IMAGE_VERSION', defaultValue: 'develop', description: '')
     }
     stages {
         stage ('Checkout') {
