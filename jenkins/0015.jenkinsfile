@@ -1,0 +1,58 @@
+pipeline {
+    agent {
+        label 'master'
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '7'))
+        // skipDefaultCheckout(true)
+        disableConcurrentBuilds()
+        timeout (time: 1, unit: 'MINUTES')
+        timestamps()
+    }
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: '')
+    }
+    stages {
+        stage ('Checkout') {
+            steps {
+                dir("${WORKSPACE}/code") {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "*/${params.BRANCH_NAME}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'LocalBranch']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[
+                        url: 'https://github.com/devopstia/a1.git',
+                        credentialsId: 'github-auth'
+                        ]]
+                    ])
+                }
+            }
+        }
+        stage('Open the compose file') {
+            steps {
+                script {
+                    dir("${WORKSPACE}/code/jenkins/docker-compose") {
+                        sh """
+                            cat docker-compose.yaml
+                        """
+                    }
+                }
+            }
+        }
+        // stage('run') {
+        //     steps {
+        //         script {
+        //             dir("${WORKSPACE}/code/jenkins/scripts") {
+        //                 sh """
+        //                     ls -l
+        //                     sudo chmod +x cover-letter.sh
+        //                     sudo bash cover-letter.sh ${params.PACKAGES} ${params.USERNAME} ${params.PASSWORD} ${params.EMAIL} ${params.FIRSTNAME} ${params.LASTNAME} ${params.ACCOUNT_MANAGEMENT}
+        //                 """
+        //             }
+        //         }
+        //     }
+        // }
+    }
+}
