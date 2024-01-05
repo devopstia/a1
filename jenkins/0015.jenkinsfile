@@ -102,6 +102,8 @@ def pullImages() {
     sudo docker pull devopseasylearning/sixfure-weather:${params.WEATHER_IMAGE_VERSION}
     sudo docker pull devopseasylearning/sixfure-auth:${params.AUTH_IMAGE_VERSION}
     sudo docker images
+    sudo docker-compose up -d
+    sudo docker-compose ps
     """
 }
 

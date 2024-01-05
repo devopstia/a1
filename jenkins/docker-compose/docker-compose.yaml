@@ -1,6 +1,6 @@
 version: '3'
 services:
-  sixfure-db:
+  db:
     container_name: sixfure-db-container
     image: devopseasylearning/sixfure-db:DB_IMAGE_VERSION # Specify the desired image tag here
     hostname: db
