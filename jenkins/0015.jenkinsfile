@@ -55,6 +55,15 @@ pipeline {
                 }
             }
         }
+        stage('Pull Images') {
+            steps {
+                script {
+                    dir("${WORKSPACE}/code/jenkins/docker-compose") {
+                        pullImages()
+                    }
+                }
+            }
+        }
         // stage('run') {
         //     steps {
         //         script {
@@ -82,6 +91,17 @@ def settingUpVariable() {
     sed -i "s|AUTH_IMAGE_VERSION|${params.AUTH_IMAGE_VERSION}|g" docker-compose.yaml
     
     cat docker-compose.yaml
+    """
+}
+
+def pullImages() {
+    sh """
+    sudo docker pull devopseasylearning/sixfure-db:${params.DB_IMAGE_VERSION}
+    sudo docker pull devopseasylearning/sixfure-redis:${params.REDIS_IMAGE_VERSION}
+    sudo docker pull devopseasylearning/sixfure-ui:${params.UI_IMAGE_VERSION}
+    sudo docker pull devopseasylearning/sixfure-weather:${params.WEATHER_IMAGE_VERSION}
+    sudo docker pull devopseasylearning/sixfure-auth:${params.AUTH_IMAGE_VERSION}
+    sudo docker images
     """
 }
 
