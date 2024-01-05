@@ -1,0 +1,77 @@
+pipeline {
+    agent {
+        label 'master'
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '7'))
+        disableConcurrentBuilds()
+        timeout(time: 1, unit: 'MINUTES')
+        timestamps()
+    }
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'main', description: '')
+        string(name: 'YOUR_NAME', defaultValue: 'Tia', description: 'Your Name')
+        string(name: 'YOUR_ADDRESS', defaultValue: '2554 Beechnut Dr', description: 'Your Address')
+        string(name: 'CANDIDATE_CITY_STATE_ZIP_CODE', defaultValue: '5887', description: 'Candidate City, State, Zip Code')
+        string(name: 'YOUR_EMAIL_ADDRESS', defaultValue: 'tia@gmail.com', description: 'Your Email Address')
+        string(name: 'YOUR_PHONE_NUMBER', defaultValue: '585 785 47854', description: 'Your Phone Number')
+        string(name: 'PREVIOUS_COMPANY', defaultValue: 'Bank America', description: 'Previous Company')
+        string(name: 'JOB_TITLE', defaultValue: 'DevOps Engineer', description: 'Job Title')
+        string(name: 'DATE', defaultValue: '10/12/2023', description: 'Date')
+        string(name: 'EMPLOYER_NAME', defaultValue: 'Manager', description: 'Employer Name')
+        string(name: 'COMPANY_NAME', defaultValue: 'DEL', description: 'Company Name')
+        string(name: 'COMPANY_ADDRESS', defaultValue: '2554 Tombal Dr', description: 'Company Address')
+        string(name: 'EMPLOYER_CITY_STATE_ZIP_CODE', defaultValue: '25245', description: 'Employer City, State, Zip Code')
+    }
+
+    stages {
+        stage ('Checkout') {
+            steps {
+                dir("${WORKSPACE}/code") {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "*/${params.BRANCH_NAME}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'LocalBranch']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[
+                        url: 'https://github.com/devopstia/a1.git',
+                        credentialsId: 'github-auth'
+                        ]]
+                    ])
+                }
+            }
+        }
+        stage('Print Parameters') {
+            steps {
+                script {
+                    echo "Your Name: ${params.YOUR_NAME}"
+                    echo "Your Address: ${params.YOUR_ADDRESS}"
+                    echo "Candidate City, State, Zip Code: ${params.CANDIDATE_CITY_STATE_ZIP_CODE}"
+                    echo "Your Email Address: ${params.YOUR_EMAIL_ADDRESS}"
+                    echo "Your Phone Number: ${params.YOUR_PHONE_NUMBER}"
+                    echo "Previous Company: ${params.PREVIOUS_COMPANY}"
+                    echo "Job Title: ${params.JOB_TITLE}"
+                    echo "Date: ${params.DATE}"
+                    echo "Employer Name: ${params.EMPLOYER_NAME}"
+                    echo "Company Name: ${params.COMPANY_NAME}"
+                    echo "Company Address: ${params.COMPANY_ADDRESS}"
+                    echo "Employer City, State, Zip Code: ${params.EMPLOYER_CITY_STATE_ZIP_CODE}"
+                }
+            }
+        }
+        stage('Run Script') {
+            steps {
+                script {
+                    dir("${WORKSPACE}/code/jenkins/scripts") {
+                        sh """
+                            ls -l
+                            sudo chmod +x cover-letter-final.sh
+                            sudo bash cover-letter-final.sh "${params.YOUR_NAME}" "${params.YOUR_ADDRESS}" "${params.CANDIDATE_CITY_STATE_ZIP_CODE}" "${params.YOUR_EMAIL_ADDRESS}" "${params.YOUR_PHONE_NUMBER}" "${params.DATE}" "${params.EMPLOYER_NAME}" "${params.COMPANY_NAME}" "${params.COMPANY_ADDRESS}" "${params.EMPLOYER_CITY_STATE_ZIP_CODE}"
+                        """
+                    }
+                }
+            }
+        }
+    }
+}
