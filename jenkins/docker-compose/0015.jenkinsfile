@@ -46,35 +46,12 @@ pipeline {
                 }
             }
         }
-        stage('Set variables') {
+        stage('Set image version') {
             steps {
                 script {
                     dir("${WORKSPACE}/code/jenkins/docker-compose") {
                         settingUpVariable()
                     }
-                }
-            }
-        }
-        stage('Set variables') {
-            steps {
-                script {
-                     dir("${WORKSPACE}/code/jenkins/docker-compose") {
-                        withCredentials([
-                        usernamePassword(credentialsId: 'weather-app-redis-cred', 
-                        usernameVariable: 'REDIS_USERNAME', 
-                        passwordVariable: 'REDIS_PASSWORD'),
-
-                        string(credentialsId: 'weather-app-api-key', 
-                        variable: 'API_TOKEN'),
-
-                        string(credentialsId: 'weather-app-mysql-root-password', 
-                        variable: 'MYSQL_ROOT_PASSWORD'),
-
-                        string(credentialsId: 'weather-app-mysql-password', 
-                        variable: 'MYSQL_PASSWORD')]) {
-                            settingUpVariable()
-                        }
-                     }
                 }
             }
         }
@@ -113,11 +90,6 @@ def settingUpVariable() {
     sed -i "s|WEATHER_IMAGE_VERSION|${params.WEATHER_IMAGE_VERSION}|g" docker-compose.yaml
     sed -i "s|AUTH_IMAGE_VERSION|${params.AUTH_IMAGE_VERSION}|g" docker-compose.yaml
     
-    sed -i "s|WEATHER_APP_REDIS_PASSWORD_USERNAME|${REDIS_USERNAME}|g" docker-compose.yaml
-    sed -i "s|WEATHER_APP_REDIS_PASSWORD|${REDIS_PASSWORD}|g" docker-compose.yaml
-    sed -i "s|WEATHER_API-TOKEN|${API_TOKEN}|g" docker-compose.yaml
-    sed -i "s|WEATHER_APP_MYSQL_ROOT_PASSWORD|${MYSQL_ROOT_PASSWORD}|g" docker-compose.yaml
-    sed -i "s|WEATHER_APP_MYSQL_PASSWORD|${MYSQL_PASSWORD}|g" docker-compose.yaml
     cat docker-compose.yaml
     """
 }
@@ -136,9 +108,7 @@ def pullImages() {
     """
 }
 
-def setCredentials() {
 
-}
 
 
 // sed -i "s|DB_IMAGE_VERSION|develop|g" docker-compose.yaml
@@ -148,40 +118,3 @@ def setCredentials() {
 // sed -i "s|AUTH_IMAGE_VERSION|develop|g" docker-compose.yaml
 
 // cat docker-compose.yaml
-
-
-
-
-pipeline{
-    agent {
-        label 'master'
-    }
-    stages{
-        stage("Build"){
-             steps {
-              withCredentials([
-                usernamePassword(credentialsId: 'weather-app-redis-cred', 
-                usernameVariable: 'REDIS_USERNAME', 
-                passwordVariable: 'REDIS_PASSWORD'),
-
-                string(credentialsId: 'weather-app-api-key', 
-                variable: 'API_TOKEN'),
-
-                string(credentialsId: 'weather-app-mysql-root-password', 
-                variable: 'MYSQL_ROOT_PASSWORD'),
-
-                string(credentialsId: 'weather-app-mysql-password', 
-                variable: 'MYSQL_PASSWORD')]) {
-
-                    echo "REDIS_USERNAME ${REDIS_USERNAME}"
-                    echo "REDIS_PASSWORD ${REDIS_PASSWORD}"
-                    echo "API_TOKEN ${API_TOKEN}"
-                    echo "MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD}"
-                    echo "MYSQL_PASSWORD ${MYSQL_PASSWORD}"
-
-                  sh "ls"
-                }
-            }
-        }
-    }
-}
