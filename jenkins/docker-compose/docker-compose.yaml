@@ -26,8 +26,8 @@ services:
     expose:
       - "6379"
     environment:
-      REDIS_USER: redis
-      REDIS_PASSWORD: redis
+      REDIS_USER: WEATHER_APP_REDIS_PASSWORD_USERNAME
+      REDIS_PASSWORD: WEATHER_APP_REDIS_PASSWORD
     volumes:
       - ./redis-data:/data
     networks:

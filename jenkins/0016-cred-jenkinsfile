@@ -1,0 +1,84 @@
+pipeline{
+    agent {
+        label 'master'
+    }
+    stages{
+        stage("Build") {
+            steps {
+                script {
+                   dir("${WORKSPACE}/code/jenkins/docker-compose") {
+                        withCredentials([
+                        usernamePassword(credentialsId: 'weather-app-redis-cred', 
+                        usernameVariable: 'REDIS_USERNAME', 
+                        passwordVariable: 'REDIS_PASSWORD')]) {
+                            """
+                            sudo apt update
+                            """
+                        }
+                   } 
+                }
+            }
+        }
+    }
+}
+
+pipeline{
+    agent {
+        label 'master'
+    }
+    stages{
+        stage("Build"){
+             steps {
+              withCredentials([
+                usernamePassword(credentialsId: 'weather-app-redis-cred', 
+                usernameVariable: 'REDIS_USERNAME', 
+                passwordVariable: 'REDIS_PASSWORD')]) {
+
+                    echo "REDIS_USERNAME ${REDIS_USERNAME}"
+                    echo "REDIS_PASSWORD ${REDIS_PASSWORD}"
+                    echo "API_TOKEN ${API_TOKEN}"
+                    echo "MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD}"
+                    echo "MYSQL_PASSWORD ${MYSQL_PASSWORD}"
+
+                  sh "ls"
+                }
+            }
+        }
+    }
+}
+
+
+
+pipeline{
+    agent {
+        label 'master'
+    }
+    stages{
+        stage("Build"){
+             steps {
+              withCredentials([
+                usernamePassword(credentialsId: 'weather-app-redis-cred', 
+                usernameVariable: 'REDIS_USERNAME', 
+                passwordVariable: 'REDIS_PASSWORD'),
+
+                string(credentialsId: 'weather-app-api-key', 
+                variable: 'API_TOKEN'),
+
+                string(credentialsId: 'weather-app-mysql-root-password', 
+                variable: 'MYSQL_ROOT_PASSWORD'),
+
+                string(credentialsId: 'weather-app-mysql-password', 
+                variable: 'MYSQL_PASSWORD')]) {
+
+                    echo "REDIS_USERNAME ${REDIS_USERNAME}"
+                    echo "REDIS_PASSWORD ${REDIS_PASSWORD}"
+                    echo "API_TOKEN ${API_TOKEN}"
+                    echo "MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD}"
+                    echo "MYSQL_PASSWORD ${MYSQL_PASSWORD}"
+
+                  sh "ls"
+                }
+            }
+        }
+    }
+}

@@ -46,15 +46,15 @@ pipeline {
                 }
             }
         }
-        stage('Set variables') {
-            steps {
-                script {
-                    dir("${WORKSPACE}/code/jenkins/docker-compose") {
-                        settingUpVariable()
-                    }
-                }
-            }
-        }
+        // stage('Set variables') {
+        //     steps {
+        //         script {
+        //             dir("${WORKSPACE}/code/jenkins/docker-compose") {
+        //                 settingUpVariable()
+        //             }
+        //         }
+        //     }
+        // }
         stage('Set variables') {
             steps {
                 script {
@@ -87,19 +87,6 @@ pipeline {
                 }
             }
         }
-        // stage('run') {
-        //     steps {
-        //         script {
-        //             dir("${WORKSPACE}/code/jenkins/scripts") {
-        //                 sh """
-        //                     ls -l
-        //                     sudo chmod +x cover-letter.sh
-        //                     sudo bash cover-letter.sh ${params.PACKAGES} ${params.USERNAME} ${params.PASSWORD} ${params.EMAIL} ${params.FIRSTNAME} ${params.LASTNAME} ${params.ACCOUNT_MANAGEMENT}
-        //                 """
-        //             }
-        //         }
-        //     }
-        // }
     }
 }
 
@@ -132,14 +119,10 @@ def pullImages() {
     sudo docker images
     sudo docker-compose down
     sudo docker-compose up -d
+    sleep 15
     sudo docker-compose ps
     """
 }
-
-def setCredentials() {
-
-}
-
 
 // sed -i "s|DB_IMAGE_VERSION|develop|g" docker-compose.yaml
 // sed -i "s|REDIS_IMAGE_VERSION|develop|g" docker-compose.yaml
@@ -152,36 +135,3 @@ def setCredentials() {
 
 
 
-pipeline{
-    agent {
-        label 'master'
-    }
-    stages{
-        stage("Build"){
-             steps {
-              withCredentials([
-                usernamePassword(credentialsId: 'weather-app-redis-cred', 
-                usernameVariable: 'REDIS_USERNAME', 
-                passwordVariable: 'REDIS_PASSWORD'),
-
-                string(credentialsId: 'weather-app-api-key', 
-                variable: 'API_TOKEN'),
-
-                string(credentialsId: 'weather-app-mysql-root-password', 
-                variable: 'MYSQL_ROOT_PASSWORD'),
-
-                string(credentialsId: 'weather-app-mysql-password', 
-                variable: 'MYSQL_PASSWORD')]) {
-
-                    echo "REDIS_USERNAME ${REDIS_USERNAME}"
-                    echo "REDIS_PASSWORD ${REDIS_PASSWORD}"
-                    echo "API_TOKEN ${API_TOKEN}"
-                    echo "MYSQL_ROOT_PASSWORD ${MYSQL_ROOT_PASSWORD}"
-                    echo "MYSQL_PASSWORD ${MYSQL_PASSWORD}"
-
-                  sh "ls"
-                }
-            }
-        }
-    }
-}
