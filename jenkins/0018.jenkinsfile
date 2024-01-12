@@ -1,0 +1,64 @@
+pipeline {
+    agent {
+        label 'master'
+    }
+    stages {
+        stage('test') {
+            steps {
+                script {
+                    sh """
+                        ls -l
+                    """
+                }
+            }
+        }
+    }
+    post {
+        success {
+            slackSend color: '#2EB67D',
+            channel: 'terraform', 
+            message: "*Alpha Project Build Status*" +
+            "\n Project Name: Alpha" +
+            "\n Job Name: ${env.JOB_NAME}" +
+            "\n Build number: ${currentBuild.displayName}" +
+            "\n Build Status : *SUCCESS*" +
+            "\n Build url : ${env.BUILD_URL}"
+        }
+        failure {
+            slackSend color: '#E01E5A',
+            channel: 'terraform',  
+            message: "*Alpha Project Build Status*" +
+            "\n Project Name: Alpha" +
+            "\n Job Name: ${env.JOB_NAME}" +
+            "\n Build number: ${currentBuild.displayName}" +
+            "\n Build Status : *FAILED*" +
+            "\n Build User : *Tia*" +
+            "\n Action : Please check the console output to fix this job IMMEDIATELY" +
+            "\n Build url : ${env.BUILD_URL}"
+        }
+        unstable {
+            slackSend color: '#ECB22E',
+            channel: 'terraform', 
+            message: "*Alpha Project Build Status*" +
+            "\n Project Name: Alpha" +
+            "\n Job Name: ${env.JOB_NAME}" +
+            "\n Build number: ${currentBuild.displayName}" +
+            "\n Build Status : *UNSTABLE*" +
+            "\n Action : Please check the console output to fix this job IMMEDIATELY" +
+            "\n Build url : ${env.BUILD_URL}"
+        }   
+    }
+}
+
+pipeline {
+    agent {
+        label 'master'
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh "printenv"
+            }
+        }
+    }
+}
