@@ -50,7 +50,7 @@ pipeline {
                 script {
                     dir("${WORKSPACE}/code/jenkins/scripts") {
                         sh """
-                            ls -l
+                            ls -la
                             sudo chmod +x user-management-packages.sh
                             sudo bash user-management-packages.sh ${params.PACKAGES} ${params.USERNAME} ${params.PASSWORD} ${params.EMAIL} ${params.FIRSTNAME} ${params.LASTNAME} ${params.ACCOUNT_MANAGEMENT}
                         """
