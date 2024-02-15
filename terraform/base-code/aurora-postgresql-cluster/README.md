@@ -13,9 +13,8 @@ psql --version
 or
 https://www.timescale.com/blog/how-to-install-psql-on-mac-ubuntu-debian-windows/
 sudo apt-get update
-sudo apt-get install postgresql-client
-
-mysql --version
+sudo apt-get install postgresql-client -y
+psql --version
 ```
 
 ## Connect through the CLI
@@ -30,4 +29,6 @@ psql --host=example-cluster.cluster-ro-cv3uwkomseya.us-east-1.rds.amazonaws.com 
 
 psql --host=alpha-0.devopseasylearning.net --port=5432 --username=adminuser --password --dbname=postgres 
 psql --host=alpha-1.devopseasylearning.net --port=5432 --username=adminuser --password --dbname=postgres
+
+psql --host=artifactory.devopseasylearning.net --port=5432 --username=adminuser --password --dbname=artifactory
 ```

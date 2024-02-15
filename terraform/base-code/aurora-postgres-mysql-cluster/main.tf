@@ -1,10 +1,9 @@
-
 resource "aws_security_group" "rds_sg" {
   vpc_id = "vpc-068852590ea4b093b"
 
   ingress {
-    from_port   = 5432
-    to_port     = 5432
+    from_port   = 3306
+    to_port     = 3306
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -24,17 +23,17 @@ resource "aws_db_subnet_group" "subnet_group" {
 
 resource "aws_rds_cluster_parameter_group" "cluster_parameter_group" {
   name        = "cluster-parameter-group"
-  family      = "aurora-postgresql11"
+  family      = "aurora-mysql5.7"
   description = "Cluster parameter group"
 }
 
 resource "aws_rds_cluster" "aurora-cluster" {
-  cluster_identifier              = "artifactory-aurora-postgres-cluster"
-  engine                          = "aurora-postgresql"
-  engine_version                  = "11.9"
-  database_name                   = "artifactory"
+  cluster_identifier              = "artifactory-aurora-mysql-cluster"
+  engine                          = "aurora-mysql"
+  engine_version                  = "5.7.mysql_aurora.2.07.10"
   master_username                 = "adminuser"
   master_password                 = "password"
+  database_name                   = "artifactory"
   db_subnet_group_name            = aws_db_subnet_group.subnet_group.name
   vpc_security_group_ids          = [aws_security_group.rds_sg.id]
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.cluster_parameter_group.name
@@ -50,7 +49,7 @@ resource "aws_rds_cluster" "aurora-cluster" {
     ]
   }
   tags = {
-    Name = "artifactory-aurora-postgres-cluster"
+    Name = "artifactory-aurora-mysql-cluster"
   }
 }
 
@@ -58,8 +57,8 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   count                = 2
   cluster_identifier   = aws_rds_cluster.aurora-cluster.id
   instance_class       = "db.r5.large"
-  engine               = "aurora-postgresql"
-  engine_version       = "11.9"
+  engine               = "aurora-mysql"
+  engine_version       = "5.7.mysql_aurora.2.07.10"
   publicly_accessible  = true
   db_subnet_group_name = aws_db_subnet_group.subnet_group.name
   identifier           = "artifactory-${count.index + 1}"
@@ -72,17 +71,6 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
     Name = "artifactory-${count.index + 1}"
   }
 }
-
-# resource "aws_route53_record" "cluster-alias" {
-#   count = length(aws_rds_cluster_instance.cluster_instances)
-
-#   zone_id = "Z09063052B43KCQ7FSGHY"
-#   name    = "artifactory-${count.index}"
-#   type    = "CNAME"
-#   ttl     = "30"
-
-#   records = [aws_rds_cluster_instance.cluster_instances[count.index].endpoint]
-# }
 
 resource "aws_route53_record" "cluster-alias" {
   zone_id = "Z09063052B43KCQ7FSGHY"
