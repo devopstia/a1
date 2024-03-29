@@ -16,19 +16,16 @@ terraform {
   backend "s3" {
     bucket         = "development-a1project-tf-state"
     dynamodb_table = "development-a1project-tf-state-lock"
-    key            = "ec2private"
+    key            = "bastion-host"
     region         = "us-east-1"
   }
 }
 
 locals {
-  aws_region             = "us-east-1"
-  ami                    = "ami-0c7217cdde317cfec"
-  instance_type          = "t2.micro"
-  key_name               = "terraform-aws"
-  vpc_security_group_ids = ["sg-01ef579a13cfecf47"]
-  subnet_id              = "subnet-0dab6530d6af78ad7"
-  volume_size            = "10"
+  aws_region    = "us-east-1"
+  instance_type = "t2.micro"
+  key_name      = "terraform-aws"
+  volume_size   = "10"
   tags = {
     "id"             = "2560"
     "owner"          = "DevOps Easy Learning"
@@ -41,13 +38,10 @@ locals {
 }
 
 module "ec2" {
-  source                 = "../../../modules/ec2"
-  aws_region             = local.aws_region
-  ami                    = local.ami
-  instance_type          = local.instance_type
-  key_name               = local.key_name
-  vpc_security_group_ids = local.vpc_security_group_ids
-  subnet_id              = local.subnet_id
-  volume_size            = local.volume_size
-  tags                   = local.tags
+  source        = "../../../modules/ec2"
+  aws_region    = local.aws_region
+  instance_type = local.instance_type
+  key_name      = local.key_name
+  volume_size   = local.volume_size
+  tags          = local.tags
 }

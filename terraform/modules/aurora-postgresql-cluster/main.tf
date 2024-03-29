@@ -1,7 +1,7 @@
 
 resource "aws_security_group" "rds_sg" {
   vpc_id = data.aws_vpc.vpc_id.id
-
+  name   = format("%s-%s-%s-aurora-postgresql-sg", var.tags["id"], var.tags["environment"], var.tags["project"])
   ingress {
     from_port   = 5432
     to_port     = 5432
@@ -18,7 +18,7 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_db_subnet_group" "subnet_group" {
-  name = format("%s-%s-%s-db-subnet-group", var.tags["id"], var.tags["environment"], var.tags["project"])
+  name = format("pg-%s-%s-%s-db-subnet-group", var.tags["id"], var.tags["environment"], var.tags["project"])
   subnet_ids = [
     data.aws_subnet.private_1.id,
     data.aws_subnet.private_2.id
@@ -26,18 +26,18 @@ resource "aws_db_subnet_group" "subnet_group" {
 }
 
 resource "aws_rds_cluster_parameter_group" "cluster_parameter_group" {
-  name        = format("%s-%s-%s-cluster-parameter-group", var.tags["id"], var.tags["environment"], var.tags["project"])
+  name        = format("pg-%s-%s-cluster-parameter-group", var.tags["environment"], var.tags["project"])
   family      = var.cluster_family
   description = format("%s-%s-%s-cluster-parameter-group", var.tags["id"], var.tags["environment"], var.tags["project"])
 }
 
 resource "aws_rds_cluster" "aurora-cluster" {
-  cluster_identifier              = format("%s-%s-%s-${var.database_name}-cluster", var.tags["id"], var.tags["environment"], var.tags["project"])
+  cluster_identifier              = format("pg-%s-%s-%s-${var.database_name}-cluster", var.tags["id"], var.tags["environment"], var.tags["project"])
   engine                          = var.engine
   engine_version                  = var.engine_version
   database_name                   = var.database_name
   master_username                 = data.aws_secretsmanager_secret_version.rds_username.secret_string
-  master_password                 = data.aws_secretsmanager_secret_version.rds_password.secret_string
+  master_password                 = DB_PASSWORD_SECRET
   db_subnet_group_name            = aws_db_subnet_group.subnet_group.name
   vpc_security_group_ids          = [aws_security_group.rds_sg.id]
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.cluster_parameter_group.name
@@ -58,7 +58,7 @@ resource "aws_rds_cluster" "aurora-cluster" {
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count                = var.count
+  count                = var.db_count
   cluster_identifier   = aws_rds_cluster.aurora-cluster.id
   instance_class       = var.instance_class
   engine               = var.engine
@@ -75,17 +75,6 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
     Name = "${var.database_name}-${count.index + 1}"
   }
 }
-
-# resource "aws_route53_record" "cluster-alias" {
-#   count = length(aws_rds_cluster_instance.cluster_instances)
-
-#   zone_id = "Z09063052B43KCQ7FSGHY"
-#   name    = "${var.database_name}-${count.index}"
-#   type    = "CNAME"
-#   ttl     = "30"
-
-#   records = [aws_rds_cluster_instance.cluster_instances[count.index].endpoint]
-# }
 
 resource "aws_route53_record" "cluster-alias" {
   zone_id = "Z09063052B43KCQ7FSGHY"

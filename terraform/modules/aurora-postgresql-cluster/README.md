@@ -17,6 +17,9 @@ sudo apt-get install postgresql-client -y
 psql --version
 ```
 
+## How to install psql in aws cloudshell
+sudo dnf install postgresql15
+
 ## Connect through the CLI
 - The default db in postgres is `postgres`
 

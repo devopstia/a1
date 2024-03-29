@@ -60,7 +60,7 @@ variable "deletion_protection" {
   default = false
 }
 
-variable "count" {
+variable "db_count" {
   type    = string
   default = "2"
 }

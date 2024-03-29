@@ -1,9 +1,9 @@
 resource "aws_instance" "example" {
-  ami                    = var.ami
+  ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
   key_name               = var.key_name
-  vpc_security_group_ids = [var.vpc_security_group_ids[0]]
-  subnet_id              = var.subnet_id
+  vpc_security_group_ids = [aws_security_group.rds_sg.id]
+  subnet_id              = data.aws_subnet.public_1.id
   root_block_device {
     volume_size = var.volume_size
   }

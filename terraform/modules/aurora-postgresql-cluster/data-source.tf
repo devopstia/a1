@@ -1,21 +1,21 @@
 data "aws_vpc" "vpc_id" {
   filter {
     name   = "tag:Name"
-    values = [format("%s-%s-%s-vpc", var.tags["id"], var.tags["environment"], var.tags["project"])]
+    values = ["2560-production-a1project-vpc"]
   }
 }
 
 data "aws_subnet" "private_1" {
   filter {
     name   = "tag:Name"
-    values = ["2650-dev-del-private-subnet-1-us-east-1a"]
+    values = ["2560-production-a1project-private-subnet-2-us-east-1b"]
   }
 }
 
 data "aws_subnet" "private_2" {
   filter {
     name   = "tag:Name"
-    values = ["2650-dev-del-private-subnet-2-us-east-1b"]
+    values = ["2560-production-a1project-private-subnet-3-us-east-1c"]
   }
 }
 
